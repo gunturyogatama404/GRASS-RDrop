@@ -6,12 +6,17 @@ from _includes.core import get_proxy_name
 async def handle_generic_error(proxy_url, removed_proxies, e):
     proxy_ip = get_proxy_name(proxy_url)
     error_messages = {
-        "Invalid proxy response": f"Invalid proxy response - {proxy_ip}",
         "Connection closed unexpectedly": f"Connection closed unexpectedly - {proxy_ip}",
+        "Empty connect reply": f"Empty connect reply - {proxy_ip}",
+        "General SOCKS server failure": f"General SOCKS server failure - {proxy_ip}",
+        "Invalid proxy response": f"Invalid proxy response - {proxy_ip}",
+        "Proxy connection timed out": f"Proxy connection timed out - {proxy_ip}",
         "Request rejected or failed": f"Request rejected or failed - {proxy_ip}",
         "Server rejected WebSocket connection: HTTP 404": f"Request rejected by server - {proxy_ip}",
         "server rejected WebSocket connection: HTTP 404": f"Request rejected by server - {proxy_ip}",  # Duplicate but lowercase start
+        "TTL expired": f"TTL Expired - {proxy_ip}",
         "[SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1000)": f"SSL wrong version number - {proxy_ip}",
+        "403 Forbidden": f"Forbidden - {proxy_ip}",
         "407 Proxy Authentication Required": f"Authentication required - {proxy_ip}",
         "502 Bad Gateway": f"Bad gateway - {proxy_ip}",
         "503 Service Unavailable": f"Service unavailable - {proxy_ip}",
