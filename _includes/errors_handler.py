@@ -1,9 +1,8 @@
 # _includes/errors_handler.py
 from loguru import logger
 from _includes.proxies_manager import update_file, get_proxy_name
-from _includes.core import get_proxy_name
 
-async def handle_generic_error(proxy_url, removed_proxies, e):
+async def handle_generic_error(proxy_url, removed_proxies, retry_counts, e):  # Add retry_counts
     proxy_ip = get_proxy_name(proxy_url)
     error_messages = {
         "Connection closed unexpectedly": f"Connection closed unexpectedly - {proxy_ip}",
@@ -29,9 +28,15 @@ async def handle_generic_error(proxy_url, removed_proxies, e):
     for error_string, log_message in error_messages.items():
         if error_string in str(e):
             logger.error(log_message)
+            retry_counts[proxy_url] = retry_counts.get(proxy_url, 0) + 1  # Increment retry count
             update_file("proxies_error.txt", proxy_url)
-            logger.warning(f"Removing proxy: {proxy_ip}")
-            removed_proxies[0] += 1
-            return  # Exit after handling the specific error
+
+            if retry_counts[proxy_url] >= 5: #Check retry count
+                logger.warning(f"Removing proxy {proxy_ip} after 5 retries.")
+                removed_proxies[0] += 1
+                # Optionally remove the proxy from your list here if you're maintaining one
+            else:
+                logger.warning(f"Retrying proxy {proxy_ip}, attempt {retry_counts[proxy_url]} / 5 ")
+            return  # Exit after handling
 
     logger.error(f"Unexpected error - {proxy_ip}: {e}")  # Handle unexpected errors

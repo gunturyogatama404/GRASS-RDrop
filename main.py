@@ -17,6 +17,8 @@ from _includes.core import connect_to_wss
 async def main():
     removed_proxies = [0]
     stats = {'pings': 0, 'pongs': 0}
+    retry_counts = {}  # Initialize retry counts dictionary
+
 
     display_banner()
     setup_logging()
@@ -39,8 +41,8 @@ async def main():
     status_task = asyncio.create_task(log_status(stats, removed_proxies))
 
     device_ids = [str(uuid.uuid3(uuid.NAMESPACE_DNS, proxy.encode())) for proxy in local_proxies]
-    tasks = [asyncio.ensure_future(connect_to_wss(proxy, device_id, _user_id, stats, removed_proxies)) for proxy, device_id in
-             zip(local_proxies, device_ids)]
+    tasks = [asyncio.ensure_future(connect_to_wss(proxy, device_id, _user_id, stats, removed_proxies, retry_counts))  # Pass retry_counts
+             for proxy, device_id in zip(local_proxies, device_ids)]
 
     device_count = len(local_proxies)
 

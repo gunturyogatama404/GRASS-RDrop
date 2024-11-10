@@ -13,7 +13,7 @@ from loguru import logger
 from _includes.proxies_manager import update_file, get_proxy_name #import
 from _includes.errors_handler import handle_generic_error
 
-async def connect_to_wss(proxy_url, device_id, user_id, stats, removed_proxies):
+async def connect_to_wss(proxy_url, device_id, user_id, stats, removed_proxies, retry_counts):
     user_agent = UserAgent()
     random_user_agent = user_agent.random
 
@@ -113,6 +113,8 @@ async def connect_to_wss(proxy_url, device_id, user_id, stats, removed_proxies):
             await asyncio.sleep(10)
             break
         except Exception as e:
-            await handle_generic_error(proxy_url, removed_proxies, e) #pass to error handler
-        await asyncio.sleep(10)  # Wait before retrying/exiting
-        break
+            await handle_generic_error(proxy_url, removed_proxies, retry_counts, e)  # Pass retry_counts
+            if retry_counts.get(proxy_url,0) < 5:
+                await asyncio.sleep(10)
+                continue #retry
+            break
