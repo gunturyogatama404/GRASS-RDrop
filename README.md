@@ -36,14 +36,14 @@ based on https://github.com/ylasgamers/getgrass/
       ```
 
 1. Clone the repository:
-```bash
-git clone https://github.com/dualkeyboards/GRASS-RDrop.git
-```
+   ```bash
+   git clone https://github.com/dualkeyboards/GRASS-RDrop.git
+   ```
 
 2. Install the required packages:
-```bash
-pip install -r requirements.txt
-```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 **Usage:**
 1. **Accounts File:**
