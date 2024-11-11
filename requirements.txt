@@ -1,8 +1,5 @@
-requests
-colorama
+fake_useragent
 inquirer
-asyncio
 loguru
 websockets_proxy
-fake_useragent
 websockets==12.0
