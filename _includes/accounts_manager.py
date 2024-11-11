@@ -2,7 +2,6 @@
 import inquirer
 from loguru import logger
 
-
 def load_accounts():
     account_file = 'accounts.txt'
     try:
@@ -13,25 +12,32 @@ def load_accounts():
         logger.error(f"Account file '{account_file}' not found. Please create the file with account entries.")
         return None
 
+def sort_accounts(accounts):
+    # Menyortir berdasarkan nomor ID atau nama akun
+    return sorted(accounts, key=lambda x: x[0])  # Asumsi: x[0] adalah _user_id
+
 def select_account(accounts):
     if not accounts:
         logger.error("No accounts found in accounts.txt.")
         return None, None
 
-    account_choices = {f"               {user_name}": _user_id for _user_id, user_name in accounts}
+    # Menyortir akun sebelum ditampilkan
+    sorted_accounts = sort_accounts(accounts)
 
-    account_question = [
-        inquirer.List('selected_account',
-                      message="        Select an account",
-                      choices=list(account_choices.keys()))
-    ]
-    account_answer = inquirer.prompt(account_question)
+    # Menampilkan daftar akun dengan nomor
+    print("\nAvailable Accounts:")
+    for idx, (user_id, user_name) in enumerate(sorted_accounts, start=1):
+        print(f"{idx}. {user_name} (ID: {user_id})")
 
-    if account_answer is None or 'selected_account' not in account_answer:
-        logger.error("No account selected. Exiting.\n")
+    # Meminta input nomor akun
+    try:
+        selected_number = int(input("\nSelect an account by number: "))
+        if selected_number < 1 or selected_number > len(sorted_accounts):
+            raise ValueError("Invalid selection.")
+
+        selected_user_name, _user_id = sorted_accounts[selected_number - 1]
+        return selected_user_name, _user_id
+
+    except ValueError as e:
+        logger.error(f"Invalid input: {e}. Please enter a valid number.\n")
         return None, None
-
-    selected_user_name = account_answer['selected_account'].strip()
-    _user_id = account_choices[f"               {selected_user_name}"]
-
-    return selected_user_name, _user_id
