@@ -1,9 +1,10 @@
-## GRASS RDrop - Multi Account Grass Bot
+## GRASS RDrop v0.2 - Grass Bot
 
 based on https://github.com/ylasgamers/getgrass/
 
 **Features:**
-* Multi-account management
+* Accounts selector
+* Proxy selector
 * Proxy support (SOCKS4, SOCKS5, HTTP)
 * Proxy rotation (with retry attempts and error handling)
 * Status logging
