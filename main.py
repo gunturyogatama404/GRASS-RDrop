@@ -43,7 +43,7 @@ async def main():
 
         status_task = asyncio.create_task(log_status(stats, removed_proxies))
 
-        device_ids = [str(uuid.uuid3(uuid.NAMESPACE_DNS, proxy.encode())) for proxy in local_proxies]
+        device_ids = [str(uuid.uuid3(uuid.NAMESPACE_DNS, proxy.encode())) for proxy in local_proxies if isinstance(proxy, str)]
         tasks = [connect_to_wss(proxy, device_id, user_id, stats, removed_proxies, retry_counts)
                  for proxy, device_id in zip(local_proxies, device_ids)]
 
