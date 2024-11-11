@@ -45,5 +45,5 @@ def setup_logging():
 
 async def log_status(stats, removed_proxies):
     while True:
-        logger.log("STATUS", f"Current Stats - Pings: {stats['pings']}, Pongs: {stats['pongs']}, Removed: {removed_proxies[0]}")
-        await asyncio.sleep(5)  # Adjust frequency as needed (e.g., every 10 seconds)
+        await asyncio.sleep(5)
+        logger.log("STATUS", f"Stats - Pings: {stats['pings']}, Pongs: {stats['pongs']}, Removed: {removed_proxies}")

@@ -3,7 +3,7 @@ from colorama import Fore
 import os
 
 def display_banner():
-    os.system('cls' if os.name == 'nt' else 'clear')  # Clear terminal
+    os.system('cls' if os.name == 'nt' else 'clear')
     print()
     print()
     print(Fore.CYAN + "          ░██████╗░██████╗░░█████╗░░██████╗░██████╗  ██████╗░██████╗░██████╗░░█████╗░██████╗░")

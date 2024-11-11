@@ -1,4 +1,4 @@
-# _includes/connections.py
+# _includes/core.py
 import asyncio
 import random
 import ssl
@@ -7,10 +7,10 @@ import time
 import uuid
 from websockets_proxy import Proxy, proxy_connect
 from fake_useragent import UserAgent
-from websockets.exceptions import ConnectionClosedError
+from websockets.exceptions import ConnectionClosedError, ConnectionClosedOK
 from python_socks._errors import ProxyConnectionError
 from loguru import logger
-from _includes.proxies_manager import update_file, get_proxy_name #import
+from _includes.proxies_manager import update_file, get_proxy_name
 from _includes.errors_handler import handle_generic_error
 
 async def connect_to_wss(proxy_url, device_id, user_id, stats, removed_proxies, retry_counts):
@@ -28,7 +28,6 @@ async def connect_to_wss(proxy_url, device_id, user_id, stats, removed_proxies, 
             uri = random.choice(urilist)
             server_hostname = "proxy.wynd.network"
 
-            # Determine proxy type
             protocol = proxy_url.split("://")[0]
             if protocol in ["socks4", "socks5", "http"]:
                 try:
@@ -51,10 +50,14 @@ async def connect_to_wss(proxy_url, device_id, user_id, stats, removed_proxies, 
                             send_message = json.dumps({"id": str(uuid.uuid4()), "version": "1.0.0", "action": "PING", "data": {}})
                             proxy_ip = get_proxy_name(proxy_url)
                             logger.log("PING", f"PINGING to: {proxy_ip}")
-                            await websocket.send(send_message)# Inside the while loop in `connect_to_wss`, where we send a ping:
-                            stats['pings'] += 1  # Increment the ping count
-                            update_file("proxies_ping.txt", proxy_url)  # Update ping file
+                            await websocket.send(send_message)
+                            stats['pings'] += 1
+                            update_file("proxies_ping.txt", proxy_url) 
                             await asyncio.sleep(10)
+                        except ConnectionClosedOK:
+                            proxy_ip = get_proxy_name(proxy_url)
+                            logger.warning(f"Connection closed gracefully during PING to {proxy_ip}")
+                            break
                         except ConnectionClosedError:
                             proxy_ip = get_proxy_name(proxy_url)
                             logger.error(f"Connection closed unexpectedly during PING to {proxy_ip}")
@@ -84,15 +87,14 @@ async def connect_to_wss(proxy_url, device_id, user_id, stats, removed_proxies, 
                             }
                             logger.log("AUTHENTICATION", f"AUTHENTICATION reply to: {proxy_ip}")
                             await websocket.send(json.dumps(auth_response))
-                            update_file("proxies_auth.txt", proxy_url)  # Update auth file
+                            update_file("proxies_auth.txt", proxy_url)
 
                         elif message.get("action") == "PONG":
                             logger.log("PONG", f"PONG received from - {proxy_ip}")
-                            # Inside the while loop in `connect_to_wss`, where we receive a pong:
-                            stats['pongs'] += 1  # Increment the pong count
+                            stats['pongs'] += 1
                             pong_response = {"id": message["id"], "origin_action": "PONG"}
                             await websocket.send(json.dumps(pong_response))
-                            update_file("proxies_pong.txt", proxy_url)  # Update pong file
+                            update_file("proxies_pong.txt", proxy_url)
                     except ConnectionClosedError:
                         proxy_ip = get_proxy_name(proxy_url)
                         logger.error(f"Connection closed while receiving data")
@@ -107,14 +109,12 @@ async def connect_to_wss(proxy_url, device_id, user_id, stats, removed_proxies, 
         except ProxyConnectionError:
             proxy_ip = get_proxy_name(proxy_url)
             logger.error(f"Connection refused - {proxy_ip}")
-            removed_proxies[0] += 1
-            update_file("proxies_error.txt", proxy_url)  # Update error file
-            # update_file("proxies_local.txt", proxy_url, action="remove")  # Remove failed proxy from proxies_local.txt
+            removed_proxies += 1
+            update_file("proxies_error.txt", proxy_url)
             await asyncio.sleep(10)
             break
         except Exception as e:
-            await handle_generic_error(proxy_url, removed_proxies, retry_counts, e)  # Pass retry_counts
-            if retry_counts.get(proxy_url,0) < 5:
-                await asyncio.sleep(10)
-                continue #retry
-            break
+            await handle_generic_error(proxy_url, removed_proxies, retry_counts, e)
+            if retry_counts.get(proxy_url, 0) >= 5:
+                break 
+            await asyncio.sleep(10)

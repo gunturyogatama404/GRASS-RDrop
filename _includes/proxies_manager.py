@@ -13,7 +13,7 @@ def get_proxy_name(proxy_url):
 def update_file(file_path, content, action="add"):
     if action == "add":
         if not os.path.exists(file_path):
-            with open(file_path, 'w'):  # Create file if it doesn't exist
+            with open(file_path, 'w'):
                 pass
         with open(file_path, 'r+') as file:
             lines = file.read().splitlines()
@@ -32,7 +32,7 @@ def load_proxies():
 
     if not proxy_files:
         logger.error("No proxy files with prefix 'proxies_' found.")
-        return None, None  # Return None for both
+        return None, None
 
     spaced_choices = ["               Add All"] + [f"               {file}" for file in proxy_files]
 
@@ -45,7 +45,7 @@ def load_proxies():
 
     if answers is None or 'selected_file' not in answers:
         logger.error("No file selected. Exiting.\n")
-        return None, None  # Return None for both
+        return None, None
 
     selected_file = answers['selected_file'].strip()
     if selected_file == "Add All":
