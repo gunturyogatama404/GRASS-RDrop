@@ -34,29 +34,34 @@ def load_proxies():
         logger.error("No proxy files with prefix 'proxies_' found.")
         return None, None
 
-    spaced_choices = ["               Add All"] + [f"               {file}" for file in proxy_files]
+    # Menyortir proxy files berdasarkan nama file
+    sorted_proxy_files = sorted(proxy_files)
 
-    questions = [
-        inquirer.List('selected_file',
-                      message="        Select a proxy file",
-                      choices=spaced_choices)
-    ]
-    answers = inquirer.prompt(questions)
+    # Menampilkan daftar file dengan nomor
+    print("\nAvailable Proxy Files:")
+    for idx, file_name in enumerate(sorted_proxy_files, start=1):
+        print(f"{idx}. {file_name}")
 
-    if answers is None or 'selected_file' not in answers:
-        logger.error("No file selected. Exiting.\n")
+    # Meminta input nomor file
+    try:
+        selected_number = int(input("\nSelect a proxy file by number: "))
+        if selected_number < 1 or selected_number > len(sorted_proxy_files):
+            raise ValueError("Invalid selection.")
+
+        selected_file = sorted_proxy_files[selected_number - 1]
+        if selected_file == "Add All":
+            local_proxies = []
+            for file_name in sorted_proxy_files:
+                with open(file_name, 'r') as file:
+                    local_proxies.extend(file.read().splitlines())
+            selected_file_display = "All proxy files"
+        else:
+            with open(selected_file, 'r') as file:
+                local_proxies = file.read().splitlines()
+            selected_file_display = selected_file
+
+        return local_proxies, selected_file_display
+
+    except ValueError as e:
+        logger.error(f"Invalid input: {e}. Please enter a valid number.\n")
         return None, None
-
-    selected_file = answers['selected_file'].strip()
-    if selected_file == "Add All":
-        local_proxies = []
-        for file_name in proxy_files:
-            with open(file_name, 'r') as file:
-                local_proxies.extend(file.read().splitlines())
-        selected_file_display = "All proxy files"
-    else:
-        with open(selected_file, 'r') as file:
-            local_proxies = file.read().splitlines()
-        selected_file_display = selected_file
-
-    return local_proxies, selected_file_display
