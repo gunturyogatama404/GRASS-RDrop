@@ -1,0 +1,5 @@
+add your multiple proxies files with prefix "proxies_", formats
+PROTOCOL://IP:PORT
+PROTOCOL://DOMAIN:PORT
+PROTOCOL://USERNAME:PASSWORD@IP:PORT
+PROTOCOL://USERNAME:PASSWORD@DOMAIN:PORT
