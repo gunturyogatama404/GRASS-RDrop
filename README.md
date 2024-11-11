@@ -25,6 +25,7 @@ based on https://github.com/ylasgamers/getgrass/
 **Installation:**
 
 0. Install softwares:
+
 windows
 ```bash
 winget install Microsoft.Git Python.Python.3.12 --accept-source-agreements --accept-package-agreements
