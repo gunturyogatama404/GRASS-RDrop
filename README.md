@@ -22,6 +22,7 @@ based on https://github.com/ylasgamers/getgrass/
 * `colorama`
 
 **Installation:**
+
 0. Install softwares:
 ```bash
 winget install Microsoft.Git Python.Python.3.12 --accept-source-agreements --accept-package-agreements
