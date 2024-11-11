@@ -1,0 +1,5 @@
+fake_useragent
+inquirer
+loguru
+websockets_proxy
+websockets==12.0
