@@ -1,5 +1,4 @@
 # _includes/core.py
-
 import asyncio
 import random
 import ssl
@@ -11,7 +10,7 @@ from fake_useragent import UserAgent
 from websockets.exceptions import ConnectionClosedError, ConnectionClosedOK
 from python_socks._errors import ProxyConnectionError
 from loguru import logger
-from _includes.proxies_manager import update_file, get_proxy_name, remove_proxy_from_file
+from _includes.proxies_manager import update_file, get_proxy_name
 from _includes.errors_handler import handle_generic_error
 
 async def connect_to_wss(proxy_url, device_id, user_id, stats, removed_proxies, retry_counts):
@@ -112,9 +111,6 @@ async def connect_to_wss(proxy_url, device_id, user_id, stats, removed_proxies, 
             logger.error(f"Connection refused - {proxy_ip}")
             removed_proxies += 1
             update_file("proxies_error.txt", proxy_url)
-
-            # Remove proxy from proxies.txt when connection is refused
-            remove_proxy_from_file("proxies.txt", proxy_url)  # Call the helper function
             await asyncio.sleep(10)
             break
         except Exception as e:
