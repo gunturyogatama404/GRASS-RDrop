@@ -10,6 +10,7 @@ based on https://github.com/ylasgamers/getgrass/
 * Error handling and reporting
 
 **Prerequisites:**
+* an account, register here https://app.getgrass.io/register/?referralCode=zUQ3Gcre5EvVp5a
 * Python 3.2 or higher
 * `pip` package manager
 * `websockets`
