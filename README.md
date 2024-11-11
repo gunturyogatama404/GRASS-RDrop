@@ -26,14 +26,14 @@ based on https://github.com/ylasgamers/getgrass/
 
 0. Install softwares:
 
-windows
-```bash
-winget install Microsoft.Git Python.Python.3.12 --accept-source-agreements --accept-package-agreements
-```
-linux
-```bash
-sudo apt update && sudo apt upgrade -y && sudo apt install python3 nano git -y
-```
+   windows
+      ```bash
+      winget install Microsoft.Git Python.Python.3.12 --accept-source-agreements --accept-package-agreements
+      ```
+   linux
+      ```bash
+      sudo apt update && sudo apt upgrade -y && sudo apt install python3 nano git -y
+      ```
 
 1. Clone the repository:
 ```bash
