@@ -3,6 +3,20 @@ import os
 import inquirer
 from loguru import logger
 
+
+def remove_proxy_from_file(filename, proxy_url):
+    try:
+        with open(filename, "r") as f:
+            lines = f.readlines()
+
+        # Open the file again to overwrite with the filtered content
+        with open(filename, "w") as f:
+            for line in lines:
+                if line.strip() != proxy_url:
+                    f.write(line)
+    except Exception as e:
+        logger.error(f"Error removing proxy from {filename}: {e}")
+
 def get_proxy_ip(proxy_url):
     return proxy_url.split("://")[1].split(":")[0]
 
@@ -28,10 +42,10 @@ def update_file(file_path, content, action="add"):
                     file.write(line)
 
 def load_proxies():
-    proxy_files = [f for f in os.listdir() if f.startswith('proxies_') and f.endswith('.txt')]
+    proxy_files = [f for f in os.listdir() if f.startswith('proxies') and f.endswith('.txt')]
 
     if not proxy_files:
-        logger.error("No proxy files with prefix 'proxies_' found.")
+        logger.error("No proxy files with prefix 'proxies' found.")
         return None, None
 
     # Menyortir proxy files berdasarkan nama file
