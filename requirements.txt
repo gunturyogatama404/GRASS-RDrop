@@ -8,7 +8,6 @@ colorama
 fake-useragent
 idna
 inquirer
-inquirerer
 loguru
 multidict
 python-socks[asyncio]
